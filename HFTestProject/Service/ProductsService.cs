@@ -12,6 +12,8 @@ namespace HFTestProject.Service
     {
         private ProductsRepo productsRepo = new ProductsRepo();
 
+        #region 查詢
+
         public IEnumerable<ProductsViewList> SelectAll()
         {
             return productsRepo.SelectAll();
@@ -27,6 +29,43 @@ namespace HFTestProject.Service
             return productsRepo.FindList(productid, productname, supplierid, categoryid, discontinued);
         }
 
+        #endregion
+
+        #region 新增/修改
+
+        public void Create(Products products)
+        {
+            productsRepo.Create(products);
+        }
+
+        public Products SelectByID(string productid)
+        {
+            return productsRepo.SelectByID(productid);
+        }
+
+        public string newProductID()
+        {
+            string a = productsRepo.newProductID();
+
+            if (a == null || a == "")
+            {
+                return ("1");
+            }
+            else
+            {
+                return (Convert.ToDecimal(a) + 1).ToString();
+            }
+        }
+
+        #endregion
+
+        public void Save()
+        {
+            productsRepo.Save();
+        }
+
+        #region AutoComplete
+
         public IDictionary<string, string> AutoProductID(string productid)
         {
             return productsRepo.AutoProductID(productid);
@@ -36,5 +75,13 @@ namespace HFTestProject.Service
         {
             return productsRepo.AutoProductName(productname);
         }
+
+        public IDictionary<string, string> AutoQuantityPerUnit(string quantityperunit)
+        {
+            return productsRepo.AutoQuantityPerUnit(quantityperunit);
+        }
+
+        #endregion
+
     }
 }

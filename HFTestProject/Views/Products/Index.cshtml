@@ -36,7 +36,9 @@
     </div>
 }
 
-    <input type="button" value="查詢" class="btn btn-warning" name="action" onclick="query();" />
+<input type="button" value="查詢" class="btn btn-warning" name="action" onclick="query();" />
+<input type="button" value="新增" class="btn btn-warning" name="action" onclick="createedit('Create','');" />
+
 
 
 @if ((Model.SearchParameter.ProductID != null
@@ -140,5 +142,6 @@
 
 </table>
 @Scripts.Render("~/bundles/jquery")
-<script type="text/javascript" src="~/Scripts/Products_CRUD/AutoComplete.js"></script>
-<script type="text/javascript" src="~/Scripts/Products_CRUD/Action.js"></script>
+<script type="text/javascript" src="~/Scripts/PublicFunction/Post_to_url.js"></script>
+<script type="text/javascript" src="~/Scripts/Products_CRUD/Index/Action.js"></script>
+<script type="text/javascript" src="~/Scripts/Products_CRUD/Index/AutoComplete.js"></script>

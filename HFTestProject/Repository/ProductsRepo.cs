@@ -132,6 +132,41 @@ namespace HFTestProject.Repository
 
         #endregion
 
+        #region 新增/修改
+
+        public void Create(Products products)
+        {
+            dc.Products.Add(products);
+        }
+
+        public Products SelectByID(string productid)
+        {
+            return dc.Products.AsNoTracking().Where(c => c.ProductID.ToString() == productid).FirstOrDefault();
+        }
+
+        public string newProductID()
+        {
+
+            string a = "";
+
+            if (dc.Products.Max(b => b.ProductID).ToString() == null)
+            {
+                return (a);
+            }
+            else
+            {
+                return dc.Products.Max(b => b.ProductID).ToString();
+            }
+        }
+
+        #endregion
+
+        public void Save()
+        {
+            dc.SaveChanges();
+        }
+
+
         #region AutoComplete
 
         public IDictionary<string, string> AutoProductID(string productid)
@@ -146,6 +181,13 @@ namespace HFTestProject.Repository
             return dc.Products.Where(
                 c => c.ProductName.StartsWith(productname)).
                 ToDictionary(c => c.ProductID.ToString(), c => c.ProductName);
+        }
+
+        public IDictionary<string, string> AutoQuantityPerUnit(string quantityperunit)
+        {
+            return dc.Products.Where(
+                c => c.QuantityPerUnit.Contains(quantityperunit)).Select(c => new { KEY = c.QuantityPerUnit, VALUE = c.QuantityPerUnit }).Distinct().
+                ToDictionary(c => c.KEY, c => c.VALUE);
         }
 
         #endregion

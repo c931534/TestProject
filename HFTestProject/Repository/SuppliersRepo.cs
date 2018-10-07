@@ -10,6 +10,11 @@ namespace HFTestProject.Repository
     {
         NorthwindEntities dc = new NorthwindEntities();
 
+        public IEnumerable<Suppliers> SelectAll()
+        {
+            return dc.Suppliers;
+        }
+
         public IDictionary<string, string> AutoSupplierID(string supplierid)
         {
             return dc.Suppliers.Where(

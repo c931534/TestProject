@@ -18,6 +18,8 @@ namespace HFTestProject.Controllers.Products_CRUD
         private CategoriesService categoriesService = new CategoriesService();
         private SuppliersService suppliersService = new SuppliersService();
 
+        #region 查詢
+
         // GET: Products
         public ActionResult Index()
         {
@@ -32,6 +34,7 @@ namespace HFTestProject.Controllers.Products_CRUD
             return View(model);
         }
 
+        // POST: Products
         [HttpPost]
         public ActionResult Index(ProductsViewModel model)
         {
@@ -67,6 +70,8 @@ namespace HFTestProject.Controllers.Products_CRUD
 
         }
 
+        #endregion
+
         // GET: Products/Details/5
         public ActionResult Details(int? id)
         {
@@ -83,11 +88,22 @@ namespace HFTestProject.Controllers.Products_CRUD
         }
 
         // GET: Products/Create
+        [HttpPost]
         public ActionResult Create()
         {
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName");
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName");
-            return View();
+            ViewBag.Suppliers_list = suppliersService.SuppliersList();
+            ViewBag.Categories_list = categoriesService.CategoriesList();
+            ViewBag.Discontinued_list = Source.Source.DiscontinuedList();
+
+            //Create
+            ProductsFormModel product_create = new ProductsFormModel();
+
+            product_create.Discontinued = "False";
+
+            ViewBag.Header = "新增";
+
+            return View("CreateEdit", product_create);
+
         }
 
         // POST: Products/Create
@@ -95,17 +111,31 @@ namespace HFTestProject.Controllers.Products_CRUD
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Products products)
+        public ActionResult CreateEdit([Bind(Include = "ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,"+
+                                                       "UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")]
+                                                        ProductsFormModel products)
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(products);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                if (products.ProductID == null)
+                {
+                    products.ProductID = productsService.newProductID();
+                }
 
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
+                Models.Products existing = productsService.SelectByID(products.ProductID);
+                Models.Products model_products = FormmodelToModel(products);
+
+                if (existing == null)
+                {
+                    productsService.Create(model_products);
+                    productsService.Save();
+
+                    return Content(@"<script>
+                                      alert('新增成功，該產品編號為 [ " + products.ProductID + @" ]，返回查詢頁面');
+                                      window.location = '/Products/Index';
+                             </script>");
+                }
+            }
             return View(products);
         }
 
@@ -129,20 +159,20 @@ namespace HFTestProject.Controllers.Products_CRUD
         // POST: Products/Edit/5
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Products products)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(products).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
-            return View(products);
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit([Bind(Include = "ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Products products)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.Entry(products).State = EntityState.Modified;
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+        //    ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
+        //    ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
+        //    return View(products);
+        //}
 
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
@@ -186,16 +216,16 @@ namespace HFTestProject.Controllers.Products_CRUD
         {
             Products model_products = new Products();
 
-            model_products.ProductID = products.ProductID;
+            model_products.ProductID = Convert.ToInt32(products.ProductID);
             model_products.ProductName = products.ProductName;
-            model_products.SupplierID = products.SupplierID;
-            model_products.CategoryID = products.CategoryID;
+            model_products.SupplierID = Convert.ToInt32(products.SupplierID);
+            model_products.CategoryID = Convert.ToInt32(products.CategoryID);
             model_products.QuantityPerUnit = products.QuantityPerUnit;
             model_products.UnitPrice = products.UnitPrice;
             model_products.UnitsInStock = products.UnitsInStock;
             model_products.UnitsOnOrder = products.UnitsOnOrder;
             model_products.ReorderLevel = products.ReorderLevel;
-            model_products.Discontinued = products.Discontinued;
+            model_products.Discontinued = Convert.ToBoolean(products.Discontinued);
 
             return model_products;
         }
@@ -205,16 +235,16 @@ namespace HFTestProject.Controllers.Products_CRUD
         {
             ProductsFormModel products = new ProductsFormModel();
 
-            products.ProductID = model_products.ProductID;
+            products.ProductID = model_products.ProductID.ToString();
             products.ProductName = model_products.ProductName;
-            products.SupplierID = model_products.SupplierID;
-            products.CategoryID = model_products.CategoryID;
+            products.SupplierID = model_products.SupplierID.ToString();
+            products.CategoryID = model_products.CategoryID.ToString();
             products.QuantityPerUnit = model_products.QuantityPerUnit;
             products.UnitPrice = model_products.UnitPrice;
             products.UnitsInStock = model_products.UnitsInStock;
             products.UnitsOnOrder = model_products.UnitsOnOrder;
             products.ReorderLevel = model_products.ReorderLevel;
-            products.Discontinued = model_products.Discontinued;
+            products.Discontinued = model_products.Discontinued.ToString();
 
             return products;
         }

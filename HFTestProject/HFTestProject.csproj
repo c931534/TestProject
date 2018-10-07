@@ -217,6 +217,7 @@
     <Compile Include="Controllers\Products_CRUD\ProductsViewModel.cs" />
     <Compile Include="Controllers\Products_CRUD\Products_acbProductIDController.cs" />
     <Compile Include="Controllers\Products_CRUD\Products_acbProductNameController.cs" />
+    <Compile Include="Controllers\Products_CRUD\Products_acbQuantityPerUnitController.cs" />
     <Compile Include="Controllers\Products_CRUD\Products_acbSupplierIDController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -357,8 +358,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Scripts\Products_CRUD\Action.js" />
-    <Content Include="Scripts\Products_CRUD\AutoComplete.js" />
+    <Content Include="Scripts\Products_CRUD\CreateEdit\AutoComplete.js" />
+    <Content Include="Scripts\Products_CRUD\Index\Action.js" />
+    <Content Include="Scripts\Products_CRUD\Index\AutoComplete.js" />
     <Content Include="Scripts\PublicFunction\Post_to_url.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
@@ -397,7 +399,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Products\Create.cshtml" />
+    <Content Include="Views\Products\CreateEdit.cshtml" />
     <Content Include="Views\Products\Delete.cshtml" />
     <Content Include="Views\Products\Details.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />

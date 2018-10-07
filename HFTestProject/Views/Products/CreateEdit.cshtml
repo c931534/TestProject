@@ -1,13 +1,16 @@
-﻿@model HFTestProject.Models.Products
+﻿@model HFTestProject.Controllers.Products_CRUD.ProductsFormModel
 
 @{
-    ViewBag.Title = "Create";
+    //ViewBag.Title = "Create";
+    var Header = ViewBag.Header;
 }
 
-<h2>Create</h2>
+<h2>@ViewBag.Header</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("CreateEdit", "Products",
+                FormMethod.Post,
+                new { @class = "form-horizontal", role = "form", id = "ProductsCreateEdit" }))
 {
     @Html.AntiForgeryToken()
     
@@ -15,6 +18,18 @@
         <h4>Products</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProductID, new { htmlAttributes = new { @class = "form-control",@readonly="true" } })
+                @if (Header == "新增")
+                {
+                    @Html.Label("*產品編號 於[ 儲存 ]時系統自動編號", htmlAttributes: new { @class = "control-label text-danger" })
+                }
+                @Html.ValidationMessageFor(model => model.ProductID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -26,7 +41,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.SupplierID, "SupplierID", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("SupplierID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.SupplierID, ViewBag.Suppliers_list.Items as List<SelectListItem>,"請選擇", new { @class = "form-control"})
                 @Html.ValidationMessageFor(model => model.SupplierID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -34,7 +49,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CategoryID, "CategoryID", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("CategoryID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.CategoryID, ViewBag.Categories_list.Items as List<SelectListItem>, "請選擇", new { @class = "form-control"})
                 @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -42,7 +57,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.QuantityPerUnit, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.QuantityPerUnit, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.QuantityPerUnit, new { htmlAttributes = new { @class = "form-control",@id= "tbQuantityPerUnit" } })
                 @Html.ValidationMessageFor(model => model.QuantityPerUnit, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -82,25 +97,46 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Discontinued, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.Discontinued)
-                    @Html.ValidationMessageFor(model => model.Discontinued, "", new { @class = "text-danger" })
-                </div>
+                @Html.DropDownListFor(model => model.Discontinued, ViewBag.Discontinued_list.Items as List<SelectListItem>, new { @class = "form-control",@disabled="true" })
+                @Html.ValidationMessageFor(model => model.Discontinued, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                @if (Header != "明細")
+                {
+                    <input type="submit" value="儲存" class="btn btn-default" onclick="check_select()" />
+                }
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                @Html.ActionLink("返回查詢畫面", "Index", "", new { @class = "btn btn-warning" })
             </div>
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
+@Scripts.Render("~/bundles/jquery")
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
+<script type="text/javascript" src="~/Scripts/Products_CRUD/CreateEdit/AutoComplete.js"></script>
+
+<script>
+    function check_select() {
+        if ($('#ProductName').val() == null || $('#ProductName').val() == "" ||
+            $('#SupplierID').val() == null || $('#SupplierID').val() == "" ||
+            $('#CategoryID').val() == null || $('#CategoryID').val() == "") {
+            alert("必填欄位未填寫！");
+            return false;
+        }
+        else {
+            if (confirm("確定要送出此資料嗎？")) {
+                $("#Discontinued").removeAttr("disabled");
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+</script>
