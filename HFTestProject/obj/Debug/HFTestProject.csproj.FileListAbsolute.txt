@@ -105,6 +105,5 @@ C:\Users\hetun\Desktop\HFTestProject\HFTestProject\bin\zh-Hant\Microsoft.Owin.Se
 C:\Users\hetun\Desktop\HFTestProject\HFTestProject\bin\zh-Hant\Microsoft.Owin.Security.Google.resources.dll
 C:\Users\hetun\Desktop\HFTestProject\HFTestProject\bin\zh-Hant\Microsoft.Owin.Security.Twitter.resources.dll
 C:\Users\hetun\Desktop\HFTestProject\HFTestProject\bin\zh-Hant\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
-C:\Users\hetun\Desktop\HFTestProject\HFTestProject\obj\Debug\HFTestProject.csprojResolveAssemblyReference.cache
 C:\Users\hetun\Desktop\HFTestProject\HFTestProject\obj\Debug\HFTestProject.dll
 C:\Users\hetun\Desktop\HFTestProject\HFTestProject\obj\Debug\HFTestProject.pdb
