@@ -154,11 +154,11 @@ namespace HFTestProject.Repository
         public string newProductID()
         {
 
-            string a = "";
+            int a = dc.Products.Max(b => b.ProductID);
 
             if (dc.Products.Max(b => b.ProductID).ToString() == null)
             {
-                return (a);
+                return (a.ToString());
             }
             else
             {
@@ -167,6 +167,12 @@ namespace HFTestProject.Repository
         }
 
         #endregion
+
+        public void Delete(string productid)
+        {
+            Products existing = dc.Products.Where(c=>c.ProductID.ToString().Equals(productid)).FirstOrDefault();
+            dc.Products.Remove(existing);
+        }
 
         public void Save()
         {

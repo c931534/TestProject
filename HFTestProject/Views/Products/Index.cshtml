@@ -38,6 +38,9 @@
 
 <input type="button" value="查詢" class="btn btn-warning" name="action" onclick="query();" />
 <input type="button" value="新增" class="btn btn-warning" name="action" onclick="createedit('Create','');" />
+<input type="button" value="多項刪除" class="btn btn-warning" name="deletemulti" onclick="multidelete();" />
+<input type="button" value="多項停產" class="btn btn-warning" name="multiupdateY" onclick="multiDiscontinuedY();" />
+<input type="button" value="多項再產" class="btn btn-warning" name="multiupdateN" onclick="multiDiscontinuedN();" />
 
 @if ((Model.SearchParameter.ProductID != null
                 || Model.SearchParameter.ProductName != null
@@ -86,7 +89,7 @@
         <td>
             @if(item.Discontinued.ToString()=="True")
             {
-                @Html.Label("已停產", new { @class = "text-danger" })
+                @Html.Label(" 已停產 ", new { @class = "text-danger" })
 
             }
             else
@@ -119,4 +122,5 @@
 @Scripts.Render("~/bundles/jquery")
 <script type="text/javascript" src="~/Scripts/PublicFunction/Post_to_url.js"></script>
 <script type="text/javascript" src="~/Scripts/Products_CRUD/Index/Action.js"></script>
+<script type="text/javascript" src="~/Scripts/Products_CRUD/Index/MultiCheckbox.js"></script>
 <script type="text/javascript" src="~/Scripts/Products_CRUD/Index/AutoComplete.js"></script>

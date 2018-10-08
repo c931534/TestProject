@@ -64,6 +64,15 @@ namespace HFTestProject.Service
 
         #endregion
 
+        public void Delete(string productid)
+        {
+            Products products = SelectByID(productid);
+            if (products != null)
+            {
+                productsRepo.Delete(productid);
+            }
+        }
+
         public void Save()
         {
             productsRepo.Save();

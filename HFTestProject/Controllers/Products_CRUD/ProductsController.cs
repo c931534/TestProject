@@ -162,7 +162,7 @@ namespace HFTestProject.Controllers.Products_CRUD
                     productsService.Save();
 
                     return Content(@"<script>
-                                      alert('新增成功，該產品編號為 [ " + products.ProductID + @" ]，返回查詢頁面');
+                                      alert('新增成功，該產品編號為 [ " + model_products.ProductID.ToString() + @" ]，返回查詢頁面');
                                       window.location = '/Products/Index';
                              </script>");
                 }
@@ -179,30 +179,117 @@ namespace HFTestProject.Controllers.Products_CRUD
             return View(products);
         }
 
-        // GET: Products/Delete/5
-        public ActionResult Delete(int? id)
+        // POST:  MultiDelete
+        [HttpPost]
+        public ActionResult MultiDelete(string[] deletelist)
         {
-            if (id == null)
+            string msg = "";
+            int error_cnt = 0;
+            int success_cnt = 0;
+            int total_cnt = deletelist.Count();
+
+            foreach (var productid in deletelist)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                Models.Products exiting = productsService.SelectByID(productid);
+
+                if (exiting == null)
+                {
+                    msg = msg + "[ " + productid + " ] 刪除失敗：無此產品\n";
+                    error_cnt = error_cnt + 1;
+                }
+                else
+                {
+                    productsService.Delete(productid);
+                    productsService.Save();
+                    msg = msg + "[ " + productid + " ] 刪除成功\n";
+                    success_cnt = success_cnt + 1;
+                }
             }
-            Products products = db.Products.Find(id);
-            if (products == null)
-            {
-                return HttpNotFound();
-            }
-            return View(products);
+
+            msg = "結        果：選取筆數共 " + total_cnt + " 筆。\n刪除成功：" + Convert.ToString(success_cnt) + " 筆。 \n刪除失敗：" + Convert.ToString(error_cnt) + " 筆。 \n明        細：\n" + msg;
+            return Json(msg);
         }
 
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        // POST:  MultiUpdateY
+        [HttpPost]
+        public ActionResult MultiUpdateY(string[] deletelist)
         {
-            Products products = db.Products.Find(id);
-            db.Products.Remove(products);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            string msg = "";
+            int error_cnt = 0;
+            int success_cnt = 0;
+            int total_cnt = deletelist.Count();
+
+            foreach (var productid in deletelist)
+            {
+                Models.Products exiting = productsService.SelectByID(productid);
+
+                if (exiting == null)
+                {
+                    msg = msg + "[ " + productid + " ] 更新失敗：無此產品\n";
+                    error_cnt = error_cnt + 1;
+                }
+                else
+                {
+                    if (Convert.ToString(exiting.Discontinued) == "True")
+                    {
+                        msg = msg + "[ " + productid + " ] 更新失敗：該產品已為 [ 停產 ] 狀態\n";
+                        error_cnt = error_cnt + 1;
+                    }
+                    else
+                    {
+                        exiting.Discontinued = Convert.ToBoolean("True");
+
+                        productsService.Edit(exiting);
+                        productsService.Save();
+                        msg = msg + "[ " + productid + " ] 更新成功\n";
+                        success_cnt = success_cnt + 1;
+                    }
+                }
+            }
+
+            msg = "結        果：選取筆數共 " + total_cnt + " 筆。\n更新成功：" + Convert.ToString(success_cnt) + " 筆。\n更新失敗：" + Convert.ToString(error_cnt) + " 筆。\n明        細：\n" + msg;
+            return Json(msg);
+        }
+
+        // POST:  MultiUpdateN
+        [HttpPost]
+        public ActionResult MultiUpdateN(string[] deletelist)
+        {
+            string msg = "";
+            int error_cnt = 0;
+            int success_cnt = 0;
+            int total_cnt = deletelist.Count();
+
+            foreach (var productid in deletelist)
+            {
+                Models.Products exiting = productsService.SelectByID(productid);
+
+                if (exiting == null)
+                {
+                    msg = msg + "[ " + productid + " ] 更新失敗：無此產品\n";
+                    error_cnt = error_cnt + 1;
+                }
+                else
+                {
+                    if (Convert.ToString(exiting.Discontinued) == "False")
+                    {
+                        msg = msg + "[ " + productid + " ] 更新失敗：該產品已為 [ 正常 ] 狀態\n";
+                        error_cnt = error_cnt + 1;
+                    }
+                    else
+                    {
+                        exiting.Discontinued = Convert.ToBoolean("False");
+
+                        productsService.Edit(exiting);
+                        productsService.Save();
+                        msg = msg + "[ " + productid + " ] 更新成功\n";
+                        success_cnt = success_cnt + 1;
+                    }
+                }
+            }
+
+            msg = "結        果：選取筆數共 " + total_cnt + " 筆。\n更新成功：" + Convert.ToString(success_cnt) + " 筆。\n更新失敗：" + Convert.ToString(error_cnt) + " 筆。\n明        細：\n" + msg;
+            return Json(msg);
         }
 
         protected override void Dispose(bool disposing)
@@ -221,10 +308,10 @@ namespace HFTestProject.Controllers.Products_CRUD
         {
             Products model_products = new Products();
 
-            model_products.ProductID = Convert.ToInt32(products.ProductID);
+            model_products.ProductID = int.Parse(products.ProductID);
             model_products.ProductName = products.ProductName;
-            model_products.SupplierID = Convert.ToInt32(products.SupplierID);
-            model_products.CategoryID = Convert.ToInt32(products.CategoryID);
+            model_products.SupplierID = int.Parse(products.SupplierID);
+            model_products.CategoryID = int.Parse(products.CategoryID);
             model_products.QuantityPerUnit = products.QuantityPerUnit;
             model_products.UnitPrice = products.UnitPrice;
             model_products.UnitsInStock = products.UnitsInStock;

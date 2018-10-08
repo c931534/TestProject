@@ -361,6 +361,7 @@
     <Content Include="Scripts\Products_CRUD\CreateEdit\AutoComplete.js" />
     <Content Include="Scripts\Products_CRUD\Index\Action.js" />
     <Content Include="Scripts\Products_CRUD\Index\AutoComplete.js" />
+    <Content Include="Scripts\Products_CRUD\Index\MultiCheckbox.js" />
     <Content Include="Scripts\PublicFunction\Post_to_url.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
