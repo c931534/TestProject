@@ -19,10 +19,20 @@ function query() {
 
 //btn:新增/修改
 function createedit(type, tbproductid) {
+    var obj = { 'productid': tbproductid };
+
     if (type == "Create") {
         alert("Create");
-        var obj = { 'type': "Create", 'p1': tbproductid };
+        post_to_url("http://" + window.location.host + "/Products/Create", obj);
+    }
 
-            post_to_url("http://" + window.location.host + "/Products/Create", obj);
+    if (type == "Edit") {
+        alert("Edit");
+        post_to_url("http://" + window.location.host + "/Products/Edit", obj);
+    }
+
+    if (type == "Detail") {
+        alert("Detail");
+        post_to_url("http://" + window.location.host + "/Products/Detail", obj);
     }
 }

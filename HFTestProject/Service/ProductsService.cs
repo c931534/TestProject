@@ -38,6 +38,11 @@ namespace HFTestProject.Service
             productsRepo.Create(products);
         }
 
+        public void Edit(Products products)
+        {
+            productsRepo.Edit(products);
+        }
+
         public Products SelectByID(string productid)
         {
             return productsRepo.SelectByID(productid);
@@ -62,6 +67,11 @@ namespace HFTestProject.Service
         public void Save()
         {
             productsRepo.Save();
+        }
+
+        public void Dispose()
+        {
+            productsRepo.Dispose();
         }
 
         #region AutoComplete

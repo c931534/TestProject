@@ -2,6 +2,7 @@
 using HFTestProject.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
@@ -22,7 +23,7 @@ namespace HFTestProject.Repository
                          on products.SupplierID equals supplier.SupplierID
                          select new ProductsViewList
                          {
-                             ProductID = products.ProductID,
+                             ProductID = products.ProductID.ToString(),
                              ProductName = products.ProductName,
                              SupplierID = products.SupplierID,
                              CompanyName = supplier.CompanyName,
@@ -48,7 +49,7 @@ namespace HFTestProject.Repository
                          on products.SupplierID equals supplier.SupplierID
                          select new ProductsViewList
                          {
-                             ProductID = products.ProductID,
+                             ProductID = products.ProductID.ToString(),
                              ProductName = products.ProductName,
                              SupplierID = products.SupplierID,
                              CompanyName = supplier.CompanyName,
@@ -81,7 +82,7 @@ namespace HFTestProject.Repository
                          on products.SupplierID equals supplier.SupplierID
                          select new ProductsViewList
                          {
-                             ProductID = products.ProductID,
+                             ProductID = products.ProductID.ToString(),
                              ProductName = products.ProductName,
                              SupplierID = products.SupplierID,
                              CompanyName = supplier.CompanyName,
@@ -97,7 +98,7 @@ namespace HFTestProject.Repository
             if (!string.IsNullOrWhiteSpace(productid))
             {
                 query = query.Where(
-                    x => x.ProductID.ToString().Contains(productid));
+                    x => x.ProductID.Contains(productid));
             }
 
             if (!string.IsNullOrWhiteSpace(productname))
@@ -139,6 +140,12 @@ namespace HFTestProject.Repository
             dc.Products.Add(products);
         }
 
+        public void Edit(Products products)
+        {
+            dc.Products.Attach(products);
+            dc.Entry(products).State = EntityState.Modified;
+        }
+
         public Products SelectByID(string productid)
         {
             return dc.Products.AsNoTracking().Where(c => c.ProductID.ToString() == productid).FirstOrDefault();
@@ -166,6 +173,10 @@ namespace HFTestProject.Repository
             dc.SaveChanges();
         }
 
+        public void Dispose()
+        {
+            dc.Dispose();
+        }
 
         #region AutoComplete
 

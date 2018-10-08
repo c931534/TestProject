@@ -72,22 +72,7 @@ namespace HFTestProject.Controllers.Products_CRUD
 
         #endregion
 
-        // GET: Products/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Products products = db.Products.Find(id);
-            if (products == null)
-            {
-                return HttpNotFound();
-            }
-            return View(products);
-        }
-
-        // GET: Products/Create
+        // POST: Products/Create
         [HttpPost]
         public ActionResult Create()
         {
@@ -106,9 +91,55 @@ namespace HFTestProject.Controllers.Products_CRUD
 
         }
 
-        // POST: Products/Create
-        // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
-        // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
+        // POST: Products/Edit
+        [HttpPost]
+        public ActionResult Edit(string productid)
+        {
+            ViewBag.Suppliers_list = suppliersService.SuppliersList();
+            ViewBag.Categories_list = categoriesService.CategoriesList();
+            ViewBag.Discontinued_list = Source.Source.DiscontinuedList();
+
+            Models.Products products = productsService.SelectByID(productid);
+
+            if (products == null)
+            {
+                return HttpNotFound();
+            }
+            else
+            {
+                ProductsFormModel products_edit = ModelToFormmodel(products);
+
+                ViewBag.Header = "修改";
+                return View("CreateEdit", products_edit);
+            }
+
+        }
+
+        // POST: Products/Detail
+        [HttpPost]
+        public ActionResult Detail(string productid)
+        {
+            ViewBag.Suppliers_list = suppliersService.SuppliersList();
+            ViewBag.Categories_list = categoriesService.CategoriesList();
+            ViewBag.Discontinued_list = Source.Source.DiscontinuedList();
+
+            Models.Products products = productsService.SelectByID(productid);
+
+            if (products == null)
+            {
+                return HttpNotFound();
+            }
+            else
+            {
+                ProductsFormModel products_detail = ModelToFormmodel(products);
+
+                ViewBag.Header = "明細";
+                return View("CreateEdit", products_detail);
+            }
+
+        }
+
+        // POST: Products/CreateEdit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateEdit([Bind(Include = "ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,"+
@@ -135,44 +166,18 @@ namespace HFTestProject.Controllers.Products_CRUD
                                       window.location = '/Products/Index';
                              </script>");
                 }
+                else
+                {
+                    productsService.Edit(model_products);
+                    productsService.Save();
+                    return Content(@"<script>
+                                      alert('產品編號 [ " + products.ProductID + @" ] 修改成功，返回查詢頁面');
+                                      window.location = '/Products/Index';
+                             </script>");
+                }
             }
             return View(products);
         }
-
-        // GET: Products/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Products products = db.Products.Find(id);
-            if (products == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-            ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
-            return View(products);
-        }
-
-        // POST: Products/Edit/5
-        // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
-        // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit([Bind(Include = "ProductID,ProductName,SupplierID,CategoryID,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued")] Products products)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Entry(products).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    ViewBag.CategoryID = new SelectList(db.Categories, "CategoryID", "CategoryName", products.CategoryID);
-        //    ViewBag.SupplierID = new SelectList(db.Suppliers, "SupplierID", "CompanyName", products.SupplierID);
-        //    return View(products);
-        //}
 
         // GET: Products/Delete/5
         public ActionResult Delete(int? id)
@@ -204,7 +209,7 @@ namespace HFTestProject.Controllers.Products_CRUD
         {
             if (disposing)
             {
-                db.Dispose();
+                productsService.Dispose();
             }
             base.Dispose(disposing);
         }

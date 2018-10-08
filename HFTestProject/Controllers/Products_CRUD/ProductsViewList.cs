@@ -9,7 +9,7 @@ namespace HFTestProject.Controllers.Products_CRUD
     public class ProductsViewList
     {
         [DisplayName("產品編號")]
-        public int ProductID { get; set; }
+        public string ProductID { get; set; }
         [DisplayName("產品名稱")]
         public string ProductName { get; set; }
         [DisplayName("供應商")]
